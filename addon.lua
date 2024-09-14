@@ -8,6 +8,14 @@ ns.ISLEOFDORN = 2248
 
 local DelveMixin = {}
 function DelveMixin:OnLoad(info)
+	self.poiInfo = info
+	self.areaPoiID = info.areaPoiID
+	self.name = info.name
+	self.description = info.description
+	self.tooltipWidgetSet = info.tooltipWidgetSet
+	self.iconWidgetSet = info.iconWidgetSet
+	self.textureKit = info.uiTextureKit
+
 	self:SetSize(32, 32)
 
 	self.texture = self:CreateTexture(nil, "ARTWORK")
@@ -17,20 +25,35 @@ function DelveMixin:OnLoad(info)
 	self:SetScript("OnEnter", self.OnMouseEnter)
 	self:SetScript("OnLeave", self.OnMouseLeave)
 
-	self.info = info
+	self:AddIconWidgets()
 end
 function DelveMixin:OnMouseEnter()
+	-- /dump C_AreaPoiInfo.GetAreaPOIInfo(2248, 7781)
+	-- see: AreaPOIPinMixin:TryShowTooltip
+	local verticalPadding
+	local isTimed, hideTimer = C_AreaPoiInfo.IsAreaPOITimed(self.areaPoiID)
 	local tooltip = GetAppropriateTooltip()
-	tooltip:SetOwner(self, "ANCHOR_CURSOR")
-	tooltip:AddLine(self.info.name)
-	if self.info.description then
-		tooltip:AddLine(self.info.description)
+	tooltip:SetOwner(self, "ANCHOR_RIGHT")
+	GameTooltip_SetTitle(tooltip, self.name, HIGHLIGHT_FONT_COLOR)
+	if self.description and self.description ~= "" then
+		GameTooltip_AddNormalLine(tooltip, self.description)
+	end
+	if self.tooltipWidgetSet then
+		local overflow = GameTooltip_AddWidgetSet(tooltip, self.tooltipWidgetSet, 10)
+		if overflow then
+			verticalPadding = -overflow
+		end
 	end
 	tooltip:Show()
+	if verticalPadding then
+		tooltip:SetPadding(0, verticalPadding)
+	end
 end
 function DelveMixin:OnMouseLeave()
 	GetAppropriateTooltip():Hide()
 end
+DelveMixin.AddIconWidgets = MapCanvasPinMixin.AddIconWidgets
+
 
 EventUtil.ContinueOnAddOnLoaded("Blizzard_WorldMap", function()
 	local points = {}
