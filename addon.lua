@@ -58,14 +58,13 @@ end
 DelveMixin.AddIconWidgets = MapCanvasPinMixin.AddIconWidgets
 
 
-EventUtil.ContinueOnAddOnLoaded("Blizzard_WorldMap", function()
-	local points = {}
-	local already = {}
+local already = {}
+EventRegistry:RegisterCallback("WorldMapOnShow", function()
+	-- all needed data should be loaded by now
 	for _, mapInfo in ipairs(C_Map.GetMapChildrenInfo(ns.KHAZALGAR)) do
 		if mapInfo.mapType == Enum.UIMapType.Zone then
 			for _, delveID in ipairs(C_AreaPoiInfo.GetDelvesForMap(mapInfo.mapID)) do
 				if not already[delveID] then
-					already[delveID] = true
 					local info = C_AreaPoiInfo.GetAreaPOIInfo(mapInfo.mapID, delveID)
 					local x, y = info.position:GetXY()
 					local tx, ty
@@ -81,6 +80,7 @@ EventUtil.ContinueOnAddOnLoaded("Blizzard_WorldMap", function()
 						Mixin(icon, DelveMixin)
 						icon:OnLoad(info)
 						HBDP:AddWorldMapIconMap(myname, icon, ns.KHAZALGAR, tx, ty)
+						already[delveID] = true
 					end
 				end
 			end
