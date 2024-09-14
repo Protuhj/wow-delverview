@@ -3,7 +3,7 @@
 ## Notes: Overview of delves on the continent map
 ## Author: Kemayo
 ## Version: @project-version@
-## IconTexture: Interface\Icons\Ability_Spy
+## IconAtlas: Delves-Bountiful
 ## DefaultState: enabled
 ## X-Category: Map
 ## X-eMail: kemayo @ gmail DOT com
