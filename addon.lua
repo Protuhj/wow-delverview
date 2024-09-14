@@ -28,7 +28,7 @@ function DelveMixin:OnLoad(info)
 	self:SetScript("OnEnter", self.OnMouseEnter)
 	self:SetScript("OnLeave", self.OnMouseLeave)
 
-	self:AddIconWidgets()
+	-- self:AddIconWidgets()
 end
 function DelveMixin:OnMouseEnter()
 	-- /dump C_AreaPoiInfo.GetAreaPOIInfo(2248, 7781)
