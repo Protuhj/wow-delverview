@@ -8,7 +8,7 @@
 ## X-Category: Map
 ## X-eMail: kemayo @ gmail DOT com
 ## X-Curse-Project-ID: 1102668
-## X-Wago-ID: 
+## X-Wago-ID: x61zavK1
 ## SavedVariables: DelverViewDB
 ## OptionalDeps: HereBeDragons
 
