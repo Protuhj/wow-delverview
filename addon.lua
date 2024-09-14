@@ -17,6 +17,9 @@ function DelveMixin:OnLoad(info)
 	self.textureKit = info.uiTextureKit
 
 	self:SetSize(32, 32)
+	if not InCombatLockdown() then
+		self:SetPassThroughButtons("LeftButton", "RightButton", "MiddleButton", "Button4", "Button5")
+	end
 
 	self.texture = self:CreateTexture(nil, "ARTWORK")
 	self.texture:SetAllPoints()
