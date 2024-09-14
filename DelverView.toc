@@ -12,4 +12,6 @@
 ## SavedVariables: DelverViewDB
 ## OptionalDeps: HereBeDragons
 
+embeds.xml
+
 addon.lua
