@@ -1,0 +1,15 @@
+## Interface: 110002
+## Title: DelverView
+## Notes: Overview of delves on the continent map
+## Author: Kemayo
+## Version: @project-version@
+## IconTexture: Interface\Icons\Ability_Spy
+## DefaultState: enabled
+## X-Category: Map
+## X-eMail: kemayo @ gmail DOT com
+## X-Curse-Project-ID: 
+## X-Wago-ID: 
+## SavedVariables: DelverViewDB
+## OptionalDeps: HereBeDragons
+
+addon.lua
