@@ -10,8 +10,6 @@
 ## X-Curse-Project-ID: 1102668
 ## X-Wago-ID: x61zavK1
 ## SavedVariables: DelverViewDB
-## OptionalDeps: HereBeDragons
-
-embeds.xml
 
 addon.lua
+addon.xml
