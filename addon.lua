@@ -1,5 +1,11 @@
 local myname, ns = ...
 
+local provider
+
+EventUtil.ContinueOnAddOnLoaded(myname, function()
+	DelverViewDB = DelverViewDB or {}
+end)
+
 DelverViewDataProviderMixin = CreateFromMixins(CVarMapCanvasDataProviderMixin, AreaPOIDataProviderMixin)
 DelverViewDataProviderMixin:Init("showDelveEntrancesOnMap")
 
@@ -41,7 +47,7 @@ function DelverViewDataProviderMixin:RefreshAllData(fromOnShow)
 			for _, delveID in ipairs(C_AreaPoiInfo.GetDelvesForMap(mapInfo.mapID)) do
 				local info = C_AreaPoiInfo.GetAreaPOIInfo(mapInfo.mapID, delveID)
 				local minX, maxX, minY, maxY = C_Map.GetMapRectOnMap(mapInfo.mapID, mapID)
-				if info and minX then
+				if info and minX and (info.atlasName == "delves-bountiful" or not DelverViewDB.only_bountiful) then
 					local x, y = info.position:GetXY()
 					local tx = Lerp(minX, maxX, x)
 					local ty = Lerp(minY, maxY, y)
@@ -69,5 +75,29 @@ function DelvePinMixin:DoesMapTypeAllowSuperTrack()
 end
 
 EventUtil.ContinueOnAddOnLoaded("Blizzard_WorldMap", function()
-	WorldMapFrame:AddDataProvider(CreateFromMixins(DelverViewDataProviderMixin))
+	provider = CreateFromMixins(DelverViewDataProviderMixin)
+	WorldMapFrame:AddDataProvider(provider)
+end)
+
+local function isChecked(key)
+	return DelverViewDB[key]
+end
+local function setChecked(key)
+	DelverViewDB[key] = not DelverViewDB[key]
+	provider:RefreshAllData()
+end
+Menu.ModifyMenu("MENU_WORLD_MAP_TRACKING", function(owner, rootDescription, contextData)
+	local mapInfo = C_Map.GetMapInfo(owner:GetParent():GetMapID())
+	if mapInfo and mapInfo.mapType == Enum.UIMapType.Continent then
+		rootDescription:CreateDivider()
+		local check = rootDescription:CreateCheckbox(
+			-- "%s Only"
+			RACE_CLASS_ONLY:format(C_QuestLog.GetTitleForQuestID(81514) or "Bountiful Delves"),
+			isChecked, setChecked, "only_bountiful"
+		)
+		check:SetTooltip(function(tooltip, elementDescription)
+			GameTooltip_SetTitle(tooltip, myname)
+			GameTooltip_AddInstructionLine(tooltip, RACE_CLASS_ONLY:format(C_QuestLog.GetTitleForQuestID(81514) or "Bountiful Delves"))
+		end)
+	end
 end)
