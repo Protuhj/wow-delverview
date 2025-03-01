@@ -11,5 +11,17 @@
 ## X-Wago-ID: x61zavK1
 ## SavedVariables: DelverViewDB
 
+## Category-enUS: Map
+## Category-deDE: Karte
+## Category-esES: Mapa
+## Category-esMX: Mapa
+## Category-frFR: Carte
+## Category-itIT: Mappa
+## Category-koKR: 지도
+## Category-ptBR: Mapa
+## Category-ruRU: Карта
+## Category-zhCN: 地图
+## Category-zhTW: 地圖
+
 addon.lua
 addon.xml
