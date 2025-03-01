@@ -2,6 +2,15 @@ local myname, ns = ...
 
 local provider
 
+local extra_children = {
+	-- Note: this is only needed for zones where a child-of-child is relevant,
+	-- and the child-of-child will have data from GetMapRectOnMap
+	[2274] = { -- Khaz Algar
+		2339, -- Dornogal (technically a child of Isle of Dorn)
+		2346, -- Undermine (technically a child of Ringing Deeps)
+	},
+}
+
 EventUtil.ContinueOnAddOnLoaded(myname, function()
 	DelverViewDB = DelverViewDB or {}
 end)
@@ -44,18 +53,28 @@ function DelverViewDataProviderMixin:RefreshAllData(fromOnShow)
 
 	for _, mapInfo in ipairs(C_Map.GetMapChildrenInfo(mapID)) do
 		if mapInfo.mapType == Enum.UIMapType.Zone then
-			for _, delveID in ipairs(C_AreaPoiInfo.GetDelvesForMap(mapInfo.mapID)) do
-				local info = C_AreaPoiInfo.GetAreaPOIInfo(mapInfo.mapID, delveID)
-				local minX, maxX, minY, maxY = C_Map.GetMapRectOnMap(mapInfo.mapID, mapID)
-				if info and minX and (info.atlasName == "delves-bountiful" or not DelverViewDB.only_bountiful) then
-					local x, y = info.position:GetXY()
-					local tx = Lerp(minX, maxX, x)
-					local ty = Lerp(minY, maxY, y)
-					info.position:SetXY(tx, ty)
-					info.dataProvider = self
-					self:GetMap():AcquirePin("DelverViewPinTemplate", info)
-				end
-			end
+			self:AddDelvesForMap(mapID, mapInfo)
+		end
+	end
+	if extra_children[mapID] then
+		for _, childID in ipairs(extra_children[mapID]) do
+			self:AddDelvesForMap(mapID, C_Map.GetMapInfo(childID))
+		end
+	end
+end
+
+function DelverViewDataProviderMixin:AddDelvesForMap(parentMapID, mapInfo)
+	if not mapInfo then return end
+	for _, delveID in ipairs(C_AreaPoiInfo.GetDelvesForMap(mapInfo.mapID)) do
+		local info = C_AreaPoiInfo.GetAreaPOIInfo(mapInfo.mapID, delveID)
+		local minX, maxX, minY, maxY = C_Map.GetMapRectOnMap(mapInfo.mapID, parentMapID)
+		if info and minX and (info.atlasName == "delves-bountiful" or not DelverViewDB.only_bountiful) then
+			local x, y = info.position:GetXY()
+			local tx = Lerp(minX, maxX, x)
+			local ty = Lerp(minY, maxY, y)
+			info.position:SetXY(tx, ty)
+			info.dataProvider = self
+			self:GetMap():AcquirePin("DelverViewPinTemplate", info)
 		end
 	end
 end
