@@ -108,15 +108,22 @@ end
 Menu.ModifyMenu("MENU_WORLD_MAP_TRACKING", function(owner, rootDescription, contextData)
 	local mapInfo = C_Map.GetMapInfo(owner:GetParent():GetMapID())
 	if mapInfo and mapInfo.mapType == Enum.UIMapType.Continent then
+		-- "%s Only"
+		local title = RACE_CLASS_ONLY:format(C_QuestLog.GetTitleForQuestID(81514) or "Bountiful Delves")
 		rootDescription:CreateDivider()
-		local check = rootDescription:CreateCheckbox(
-			-- "%s Only"
-			RACE_CLASS_ONLY:format(C_QuestLog.GetTitleForQuestID(81514) or "Bountiful Delves"),
-			isChecked, setChecked, "only_bountiful"
-		)
+		local check = rootDescription:CreateCheckbox(title, isChecked, setChecked, "only_bountiful")
 		check:SetTooltip(function(tooltip, elementDescription)
-			GameTooltip_SetTitle(tooltip, myname)
-			GameTooltip_AddInstructionLine(tooltip, RACE_CLASS_ONLY:format(C_QuestLog.GetTitleForQuestID(81514) or "Bountiful Delves"))
+			-- this display style is from BlizzardWorldMapTemplates.lua,
+			-- altered to account for SetTooltip not giving us access to the
+			-- same things that SetOnEnter does.
+			local owner = tooltip:GetOwner()
+			tooltip:ClearAllPoints()
+			tooltip:SetPoint("RIGHT", owner, "LEFT", -3, 0)
+			tooltip:SetOwner(owner, "ANCHOR_PRESERVE")
+
+			GameTooltip_SetTitle(tooltip, title)
+			GameTooltip_AddNormalLine(tooltip, DELVES_GREAT_VAULT_DESCRIPTION_SEASON_STARTED)
+			tooltip:AddDoubleLine(" ", myname, 1, 1, 1, 0, 1, 1)
 		end)
 	end
 end)
